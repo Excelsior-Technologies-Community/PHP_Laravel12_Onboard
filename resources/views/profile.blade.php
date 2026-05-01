@@ -65,6 +65,15 @@
         .btn:hover {
             background: #45a049;
         }
+
+        .profile-img {
+            display: block;
+            margin: 0 auto 15px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 
     <div class="container">
@@ -75,22 +84,53 @@
                 Complete Your Profile
             </div>
 
-            <form method="POST" action="/profile">
+            <!-- ✅ SUCCESS MESSAGE -->
+            @if(session('success'))
+            <p style="color:green; text-align:center;">
+                {{ session('success') }}
+            </p>
+            @endif
+
+            <!-- ✅ IMAGE PREVIEW -->
+            @if(isset($profile) && $profile->image)
+            <img src="{{ asset('storage/' . $profile->image) }}" class="profile-img">
+            @endif
+
+            <!-- ✅ IMPORTANT: enctype added -->
+            <form method="POST" action="/profile" enctype="multipart/form-data">
 
                 @csrf
 
                 <div class="input-group">
                     <label class="input-label">Phone Number</label>
-                    <input type="text" name="phone" class="input-field" placeholder="Enter phone number" required>
+                    <input
+                        type="text"
+                        name="phone"
+                        class="input-field"
+                        value="{{ old('phone', $profile->phone ?? '') }}"
+                        placeholder="Enter phone number"
+                        required>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">Address</label>
-                    <input type="text" name="address" class="input-field" placeholder="Enter address" required>
+                    <input
+                        type="text"
+                        name="address"
+                        class="input-field"
+                        value="{{ old('address', $profile->address ?? '') }}"
+                        placeholder="Enter address"
+                        required>
+                </div>
+
+                <!-- ✅ NEW IMAGE FIELD -->
+                <div class="input-group">
+                    <label class="input-label">Profile Image</label>
+                    <input type="file" name="image" class="input-field">
                 </div>
 
                 <button type="submit" class="btn">
-                    Save Profile
+                    Save
                 </button>
 
             </form>

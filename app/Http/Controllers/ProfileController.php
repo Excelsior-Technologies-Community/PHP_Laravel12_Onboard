@@ -9,11 +9,12 @@ use App\Models\Profile;
 class ProfileController extends Controller
 {
 
-
     public function index()
     {
         $user = auth()->user();
-        return view('profile', compact('user')); // make sure you have resources/views/profile/index.blade.php
+        $profile = $user->profile; // get existing profile
+
+        return view('profile', compact('user', 'profile'));
     }
 
     public function store(Request $request)
@@ -21,20 +22,33 @@ class ProfileController extends Controller
         $request->validate([
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $user = Auth::user();
 
+        // Get existing profile
+        $profile = $user->profile;
+
+        // Keep old image if not uploading new
+        $imagePath = $profile->image ?? null;
+
+        // Upload new image
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('profiles', 'public');
+        }
+
         // Save or update profile
-        $profile = Profile::updateOrCreate(
+        Profile::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'phone' => $request->phone,
                 'address' => $request->address,
-                'completed' => true, // ✅ mark as complete
+                'image' => $imagePath,
+                'completed' => true,
             ]
         );
 
-        return redirect('/dashboard')->with('success', 'Profile completed!');
+        return redirect('/dashboard')->with('success', 'Profile updated successfully!');
     }
 }
