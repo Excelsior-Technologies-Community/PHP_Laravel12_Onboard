@@ -9,21 +9,15 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
+    Route::get('/onboarding/wizard', [ProfileController::class, 'wizard'])->name('onboarding.wizard');
+    Route::post('/onboarding/wizard', [ProfileController::class, 'submitWizard'])->name('onboarding.wizard.submit');
 
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'store'])->name('profile.update');
 
-    // Posts
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     Route::post('/post', [PostController::class, 'store'])->name('post.store');
-
-    // ✅ NEW
     Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 });
 

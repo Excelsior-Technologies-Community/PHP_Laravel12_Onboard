@@ -8,19 +8,21 @@ class Profile extends Model
 {
     protected $fillable = [
         'user_id',
+        'bio',
         'phone',
         'address',
-        'image',       // ✅ added
+        'location',
+        'skills',
+        'image',
+        'onboarding_step',
         'completed'
     ];
 
-    // Relationship (optional but good practice)
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Helper method
     public function isComplete()
     {
         return $this->completed;
