@@ -5,22 +5,21 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public function up()
+    public function up(): void
     {
         Schema::table('profiles', function (Blueprint $table) {
-    if (!Schema::hasColumn('profiles', 'completed')) {
-        $table->boolean('completed')->default(false);
-    }
-});
+            if (!Schema::hasColumn('profiles', 'completed')) {
+                $table->boolean('completed')->default(false);
+            }
+        });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::table('profiles', function (Blueprint $table) {
-            $table->dropColumn('completed');
+            if (Schema::hasColumn('profiles', 'completed')) {
+                $table->dropColumn('completed');
+            }
         });
     }
 };
